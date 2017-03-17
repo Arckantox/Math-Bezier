@@ -1,0 +1,35 @@
+﻿  ESGIShader.cpp
+  Clip.cpp
+  Global.cpp
+  Polygon.cpp
+Polygon.cpp(147): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(152): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(181): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(206): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(437): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(484): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(519): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Polygon.cpp(529): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+Polygon.cpp(568): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(601): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+Polygon.cpp(605): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+Polygon.cpp(622): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Polygon.cpp(623): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Polygon.cpp(652): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Polygon.cpp(674): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(700): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(905): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(916): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(975): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(981): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(1016): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(1019): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(1022): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(1060): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(1083): warning C4018: '<': signed/unsigned mismatch
+Polygon.cpp(1102): warning C4018: '<': signed/unsigned mismatch
+  Generating code
+  All 587 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Polygon.vcxproj -> C:\Users\Michael\Documents\Visual Studio 2015\Projects\OpenGL\Release\Polygon.exe
+  Polygon.vcxproj -> C:\Users\Michael\Documents\Visual Studio 2015\Projects\OpenGL\Release\Polygon.pdb (Full PDB)

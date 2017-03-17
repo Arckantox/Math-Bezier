@@ -1,0 +1,29 @@
+﻿  Polygon.cpp
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(147): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(152): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(181): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(206): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(437): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(484): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(519): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(529): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(568): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(601): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(605): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(622): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(623): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(652): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(674): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(700): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(905): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(916): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(975): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(981): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(1016): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(1019): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(1022): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(1060): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(1083): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\polygon\polygon.cpp(1102): warning C4018: '<': signed/unsigned mismatch
+  Polygon.vcxproj -> C:\Users\Michael\Documents\Visual Studio 2015\Projects\OpenGL\Debug\Polygon.exe
+  Polygon.vcxproj -> C:\Users\Michael\Documents\Visual Studio 2015\Projects\OpenGL\Debug\Polygon.pdb (Full PDB)

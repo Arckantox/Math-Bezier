@@ -1,0 +1,12 @@
+﻿  Bezier.cpp
+c:\users\michael\documents\visual studio 2015\projects\opengl\math-bezier\bezier\bezier.cpp(102): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\math-bezier\bezier\bezier.cpp(111): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\math-bezier\bezier\bezier.cpp(135): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\math-bezier\bezier\bezier.cpp(142): warning C4018: '<=': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\math-bezier\bezier\bezier.cpp(144): warning C4018: '<=': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\math-bezier\bezier\bezier.cpp(355): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\math-bezier\bezier\bezier.cpp(382): warning C4018: '<': signed/unsigned mismatch
+c:\users\michael\documents\visual studio 2015\projects\opengl\math-bezier\bezier\bezier.cpp(389): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\michael\documents\visual studio 2015\projects\opengl\math-bezier\bezier\bezier.cpp(390): warning C4018: '<': signed/unsigned mismatch
+  Bezier.vcxproj -> C:\Users\Michael\Documents\Visual Studio 2015\Projects\OpenGL\Debug\Bezier.exe
+  Bezier.vcxproj -> C:\Users\Michael\Documents\Visual Studio 2015\Projects\OpenGL\Debug\Bezier.pdb (Full PDB)
