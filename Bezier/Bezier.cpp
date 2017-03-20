@@ -12,8 +12,8 @@
 #include <algorithm> 
 #define PI 3.14159265
 
-float r0=2.0f;
-float r1=3.0f;
+float r0;
+float r1;
 
 
 
@@ -60,9 +60,23 @@ void rotating();
 void mouse_activeFunc(int, int);
 void raccordBezierMenuCallback(int);
 int inBezier2;
+void colorMenuCallBack(int);
+int colorSubMenu;
+std::vector<float> r;
+std::vector<float> g;
+std::vector<float> b;
+float colorr=0.0f;
+float colorg = 0.0f;
+float colorb = 0.0f;
 
 int main(int argc, char **argv)
 {
+	r.push_back(0.0f);
+
+	g.push_back(0.0f);
+
+	b.push_back(0.0f);
+
 	isDrawing = 0;
 	bezierfin = 0;
 	isRotating = 0;
@@ -118,7 +132,7 @@ void dessinBezier()
 	}
 	glEnd();
 	glutSwapBuffers();
-	glColor3f(0.0f, 0,1.0f);
+	glColor3f(colorr, colorg,colorb);
 	
 		for (int k = 0; k < p.size(); k++)
 		{
@@ -140,8 +154,8 @@ void dessinBezier()
 		}
 		glEnd();
 		glutSwapBuffers();
-
-		glColor3f(0.0f, 0, 1.0f);
+		if(r.size()>=1)
+		glColor3f(r[r.size()-1], g[g.size() - 1], b[b.size() - 1]);
 
 		for (int k = 0; k < p1.size(); k++)
 		{
@@ -261,12 +275,19 @@ void mouse(int button, int state, int x, int y)
 					switch (typeRaccord)
 					{
 						case 1:
-							
+							std::cout << "Enter r0 and r1 :" << std::endl;
+							std::cin >> r0 >> r1;
+							std::cout << r0 << std::endl;
+							std::cout << r1 << std::endl;
 							tmp1.x = points1[0].x + (points[points.size()-1].x-points[points.size()-2].x)*r1/r0;
 							tmp1.y = points1[0].y + (points[points.size() - 1].y - points[points.size() - 2].y)*r1 / r0;
 							points1.push_back(tmp1);
 							break;
 						case 2:
+							std::cout << "Enter r0 and r1 :" << std::endl;
+							std::cin >> r0 >> r1;
+							std::cout << r0 << std::endl;
+							std::cout << r1 << std::endl;
 							tmp1.x = points1[0].x + (points[points.size() - 1].x - points[points.size() - 2].x)*r1 / r0;
 							tmp1.y = points1[0].y + (points[points.size() - 1].y - points[points.size() - 2].y)*r1 / r0;
 							points1.push_back(tmp1);
@@ -312,9 +333,25 @@ void showMenu()
 	glutDestroyMenu(menuPrincipal);
 	if (isDrawing == 0)
 	{
+		
+		colorSubMenu = glutCreateMenu(colorMenuCallBack);
+		glutAddMenuEntry("Blanc", 11);
+		glutAddMenuEntry("Jaune", 12);
+		glutAddMenuEntry("Vert", 13);
+		glutAddMenuEntry("Noir", 14);
+		glutAddMenuEntry("Bleu", 15);
+		glutAddMenuEntry("Orange", 16);
+		glutAddMenuEntry("Violet", 17);
+
 		menuPrincipal = glutCreateMenu(mainMenuCallback);
 
+		glutAddSubMenu("Couleur", colorSubMenu);
 		glutAddMenuEntry("Points de controle", 1);
+
+
+		
+
+		
 	}
 	else if (isDrawing == 1 && bezierfin == 0)
 	{
@@ -329,9 +366,10 @@ void showMenu()
 			menuPrincipal = glutCreateMenu(transformMenuCallback);
 			glutAddMenuEntry("Rotation", 1);
 			glutAddMenuEntry("Translation", 2);
+			
 			if (bezier2 == 0)
 			{
-			
+			glutAddSubMenu("Couleur", colorSubMenu);
 			glutAddMenuEntry("Tracer C0", 3);
 			glutAddMenuEntry("Tracer C1", 4);
 			glutAddMenuEntry("Tracer C2", 5);
@@ -351,7 +389,9 @@ void showMenu()
 			glutAddMenuEntry("Annuler le tracé", 2);
 		}
 		if (bezierfin == 1 && bezier2 == 0 && isRotating == 0 && isTranslating == 0 && inBezier2 == 1) {
+			
 			menuPrincipal = glutCreateMenu(secondBezierMenuCallback);
+			
 			glutAddMenuEntry("Terminer le tracé", 1);
 			glutAddMenuEntry("Annuler le tracé", 2);
 		}
@@ -379,6 +419,11 @@ void drawingMenuCallback(int menuItem)
 	switch (menuItem)
 	{
 	case 1:
+		if (inBezier2 == 0) {
+			colorr = r[r.size() - 1];
+			colorg = g[g.size() - 1];
+			colorb = b[b.size() - 1];
+		}
 		bezier();
 		dessinBezier();
 		glEnd();
@@ -593,7 +638,7 @@ void rotating()
 
 
 		}
-		bezier1();
+		if(bezier2==1) bezier1();
 		bezier();
 		dessinBezier();
 		Sleep(10);
@@ -635,34 +680,85 @@ void raccord()
 }
 
 void bezier1() {
-	float t;
-	Point tmp[50];
+	
+		float t;
+		Point tmp[50];
 
-	p1 = neew;
-	for (int k = 0; k < n; k++)
-	{
-		for (int ij = 0; ij < points1.size(); ij++)
+		p1 = neew;
+		for (int k = 0; k < n; k++)
 		{
-			tmp[ij] = points1[ij];
-		}
-
-
-		t = (float)k / n;
-		for (int j = 1; j <= points1.size() - 1; j++)
-		{
-			for (int i = 0; i <= points1.size() - 1 - j; i++)
+			for (int ij = 0; ij < points1.size(); ij++)
 			{
-				tmp[i].x = (1 - t)*tmp[i].x + t*tmp[i + 1].x;
-				tmp[i].y = (1 - t)*tmp[i].y + t*tmp[i + 1].y;
-
+				tmp[ij] = points1[ij];
 			}
+
+
+			t = (float)k / n;
+			for (int j = 1; j <= points1.size() - 1; j++)
+			{
+				for (int i = 0; i <= points1.size() - 1 - j; i++)
+				{
+					tmp[i].x = (1 - t)*tmp[i].x + t*tmp[i + 1].x;
+					tmp[i].y = (1 - t)*tmp[i].y + t*tmp[i + 1].y;
+
+				}
+			}
+
+			p1.push_back(tmp[0]);
+
+
 		}
 
-		p1.push_back(tmp[0]);
 
+		p1.push_back(points1.at(points1.size() - 1));
+		bezier2 = 1;
 
+	
+}
+
+void colorMenuCallBack(int a)
+{
+	
+		switch (a)
+		{
+		case 12:
+			
+			r.push_back(1.0);
+			g.push_back(1.0);
+			b.push_back(0.0);
+			break;
+		case 13:
+			
+			r.push_back(0.0f);
+			g.push_back(1.0f);
+			b.push_back(0.0f);
+			break;
+		case 14:
+			r.push_back(0.0f);
+			g.push_back(0.0f);
+			b.push_back(0.0f);
+			break;
+		case 15:
+			r.push_back(0.0f);
+			g.push_back(0.0f);
+			b.push_back(1.0f);
+			break;
+		case 16:
+			r.push_back(1.0f);
+			g.push_back(0.5f);
+			b.push_back(0.0f);
+			break;
+		case 17:
+			r.push_back(1.0f);
+			g.push_back(0.0f);
+			b.push_back(1.0f);
+			break;
+		default:
+			r.push_back(1.0f);
+			g.push_back(1.0f);
+			b.push_back(1.0f);
+			break;
+		}
 	}
 
-	p1.push_back(points1.at(points1.size() - 1));
-	bezier2 = 1;
-}
+
