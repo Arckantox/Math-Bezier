@@ -31,6 +31,7 @@ std::vector<Point> p1;
 
 int bezier2;
 int typeRaccord;
+int isTransvecting;
 
 void bezier1();
 void raccord();
@@ -43,6 +44,7 @@ int isRotating;
 int isTranslating;
 std::vector<Point> translate;
 std::vector<Point> rotate;
+std::vector<Point> transvect;
 int isCreating2ndCurve;
 void dessinBezier();
 void bezier();
@@ -55,6 +57,7 @@ void secondBezierMenuCallback(int);
 void transformMenuCallback(int);
 void rMenuCallback(int);
 void tMenuCallback(int);
+void cMenuCallback(int);
 void translating();
 void rotating();
 void mouse_activeFunc(int, int);
@@ -68,6 +71,7 @@ std::vector<float> b;
 float colorr=0.0f;
 float colorg = 0.0f;
 float colorb = 0.0f;
+void transvecting();
 
 int main(int argc, char **argv)
 {
@@ -262,6 +266,12 @@ void mouse(int button, int state, int x, int y)
 				tmp.y = -y + 250.0f;
 				rotate.push_back(tmp);
 			}
+			if (button == GLUT_LEFT_BUTTON && state == GLUT_UP &&bezierfin == 1 && isTransvecting == 1)
+			{
+				tmp.x = x - 250.0f;
+				tmp.y = -y + 250.0f;
+				transvect.push_back(tmp);
+			}
 			if (button == GLUT_LEFT_BUTTON && state == GLUT_UP &&bezierfin == 1 && inBezier2 == 1)
 			{
 				
@@ -318,10 +328,40 @@ void SpecialInput(int key, int x, int y)
 		n++;
 		
 		bezier();
+		if(bezier2==1)bezier1();
 		break;
 	case GLUT_KEY_DOWN:
 		n--;
 		bezier();
+		if (bezier2 == 1)bezier1();
+		break;
+	case GLUT_KEY_SHIFT_L:
+		for (int i = 0; i < points.size(); i++)
+		{
+			points[i].x *= 1.1;
+			points[i].y *=1.1;
+		}
+		for (int i = 0; i < points1.size(); i++)
+		{
+			points1[i].x *= 1.1;
+			points1[i].y *= 1.1;
+		}
+		bezier();
+		if (bezier2 == 1)bezier1();
+		break;
+	case GLUT_KEY_CTRL_L:
+		for (int i = 0; i < points.size(); i++)
+		{
+			points[i].x /=1.1;
+			points[i].y /= 1.1;
+		}
+		for (int i = 0; i < points1.size(); i++)
+		{
+			points1[i].x /= 1.1;
+			points1[i].y /= 1.1;
+		}
+		bezier();
+		if (bezier2 == 1)bezier1();
 		break;
 	}
 
@@ -366,13 +406,13 @@ void showMenu()
 			menuPrincipal = glutCreateMenu(transformMenuCallback);
 			glutAddMenuEntry("Rotation", 1);
 			glutAddMenuEntry("Translation", 2);
-			
+			glutAddMenuEntry("Transvection", 3);
 			if (bezier2 == 0)
 			{
 			glutAddSubMenu("Couleur", colorSubMenu);
-			glutAddMenuEntry("Tracer C0", 3);
-			glutAddMenuEntry("Tracer C1", 4);
-			glutAddMenuEntry("Tracer C2", 5);
+			glutAddMenuEntry("Tracer C0", 4);
+			glutAddMenuEntry("Tracer C1", 5);
+			glutAddMenuEntry("Tracer C2", 6);
 			}
 		}
 
@@ -385,6 +425,12 @@ void showMenu()
 		if (bezierfin == 1 && isRotating == 0 && isTranslating == 1)
 		{
 			menuPrincipal = glutCreateMenu(tMenuCallback);
+			glutAddMenuEntry("Terminer le tracé", 1);
+			glutAddMenuEntry("Annuler le tracé", 2);
+		}
+		if (bezierfin == 1 && isRotating == 0 && isTranslating == 0 && isTransvecting==1)
+		{
+			menuPrincipal = glutCreateMenu(cMenuCallback);
 			glutAddMenuEntry("Terminer le tracé", 1);
 			glutAddMenuEntry("Annuler le tracé", 2);
 		}
@@ -443,6 +489,7 @@ void transformMenuCallback(int menuItem)
 	switch (menuItem)
 	{
 	case 1:
+		isTransvecting = 0;
 		isRotating = 1;
 		isTranslating = 0;
 		isCreating2ndCurve = 0;
@@ -450,23 +497,25 @@ void transformMenuCallback(int menuItem)
 		glutSwapBuffers();
 		break;
 	case 2:
+		isTransvecting = 0;
 		isRotating = 0;
 		isTranslating = 1;
 		isCreating2ndCurve = 0;
 		glEnd();
 		glutSwapBuffers();
 		break;
-	case 3:
+	case 4:
 		inBezier2 = 1;
 		isRotating = 0;
 		isTranslating = 0;
+		isTransvecting = 0;
 		isCreating2ndCurve = 1;
 		typeRaccord = 0;
 		glEnd();
 		glutSwapBuffers();
 		break;
-	case 4:
-
+	case 5:
+		isTransvecting = 0;
 		inBezier2 = 1;
 		isRotating = 0;
 		isTranslating = 0;
@@ -475,12 +524,21 @@ void transformMenuCallback(int menuItem)
 		glEnd();
 		glutSwapBuffers();
 		break;
-	case 5:
+	case 6:
+		isTransvecting = 0;
 		inBezier2 = 1;
 		isRotating = 0;
 		isTranslating = 0;
 		isCreating2ndCurve = 1;
 		typeRaccord = 2;
+		glEnd();
+		glutSwapBuffers();
+		break;
+	case 3:
+		isRotating = 0;
+		isTranslating = 0;
+		isTransvecting = 1;
+		isCreating2ndCurve = 0;
 		glEnd();
 		glutSwapBuffers();
 		break;
@@ -509,6 +567,27 @@ void tMenuCallback(int menuItem)
 	showMenu();
 }
 
+void cMenuCallback(int menuItem)
+{
+	switch (menuItem)
+	{
+	case 1:
+		isTransvecting = 0;
+		transvecting();
+		dessinBezier();
+		glEnd();
+		glutSwapBuffers();
+		break;
+	case 2:
+		transvect = neew;
+		isTransvecting = 0;
+		glEnd();
+		glutSwapBuffers();
+		break;
+	}
+	showMenu();
+}
+
 void rMenuCallback(int menuItem)
 {
 	switch (menuItem)
@@ -529,6 +608,9 @@ void rMenuCallback(int menuItem)
 	}
 	showMenu();
 }
+
+
+
 
 void secondBezierMenuCallback(int menuItem)
 {
@@ -581,7 +663,7 @@ void translating()
 		points1.at(i).y += vecTranslate.y;
 	}
 	bezier();
-	bezier1();
+	if (bezier2 == 1) bezier1();
 }
 
 void rotating()
@@ -762,3 +844,27 @@ void colorMenuCallBack(int a)
 	}
 
 
+void transvecting()
+{
+		Point vecTranslate;
+		float tmp;
+		vecTranslate.x = transvect[transvect.size() - 1].x - transvect[transvect.size() - 2].x;
+		vecTranslate.y = transvect.at(transvect.size() - 1).y - transvect.at(transvect.size() - 2).y;
+
+		for (int i = 0; i < points.size(); i++)
+		{
+			tmp = points.at(i).x;
+			points.at(i).x = points.at(i).x + vecTranslate.y/500*points.at(i).y;
+			points.at(i).y = points.at(i).y+ vecTranslate.x/500*tmp;
+		}
+		for (int i = 0; i < points1.size(); i++)
+		{
+			tmp = points1.at(i).x;
+			points1.at(i).x = points1.at(i).x + vecTranslate.y/500*points1.at(i).y;
+			points1.at(i).y = points1.at(i).y + vecTranslate.x/500*tmp;
+		}
+		bezier();
+		if (bezier2 == 1) bezier1();
+	
+
+}
