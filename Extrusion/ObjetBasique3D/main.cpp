@@ -82,14 +82,14 @@ bool lineMode = false;
 int sizetab;
 int sizeind;
 
-std::vector<Vec2> shape;
+std::vector<Vec3> shape;
 
 void MakeVectors()
 {
-	shape.push_back(Vec2(-t, -t));
-	shape.push_back(Vec2(-t, t ));
-	shape.push_back(Vec2(t, t ));
-	shape.push_back(Vec2(t, -t ));
+	shape.push_back(Vec3(-t, -t, 0));
+	shape.push_back(Vec3(-t, t, 0 ));
+	shape.push_back(Vec3(t, t, 0 ));
+	shape.push_back(Vec3(t, -t, 0 ));
 }
 
 double path[4][3] = 
@@ -169,7 +169,7 @@ void ChangeCam(int type)
 
 }
 
-bool LineExtrusion(std::vector<Vec2> &shape, float direct[3], float length, float coefEnd = 1)
+bool LineExtrusion(std::vector<Vec3> &shape, float length, float coefEnd = 1)
 {
 	MakeVectors();
 	std::vector<Vec3> shape3D;
@@ -182,11 +182,11 @@ bool LineExtrusion(std::vector<Vec2> &shape, float direct[3], float length, floa
 	{
 		if (i < ssize) // Base shape
 		{
-			shape3D.push_back(Vec3( shape[i].x, shape[i].y, 0.0 ));
+			shape3D.push_back(Vec3( shape[i].x, shape[i].y, shape[i].z));
 		}
 		else	// End shape
 		{
-			shape3D.push_back(Vec3(shape[i - ssize].x, shape[i - ssize].y, length ));
+			shape3D.push_back(Vec3(shape[i - ssize].x * coefEnd, shape[i - ssize].y * coefEnd, shape[i - ssize].z + length ));
 		}
 	}
 
@@ -287,12 +287,75 @@ void DisplayExtrusion()
 	glUseProgram(0);
 }
 
+/*
+bool PathExtrusion(std::vector<Vec3> &shape, std::vector<Vec3> &path)
+{
+	MakeVectors();
+	std::vector<Vec3> shape3D;
 
+	int ssize = shape.size();
+
+	std::cout << "Points in shape = " << ssize << std::endl;
+
+	for (int i = 0; i < ssize * 2; i++)	//Remplissage vector des points de la shape 3D, base puis end
+	{
+		if (i < ssize) // Base shape
+		{
+			shape3D.push_back(Vec3(shape[i].x, shape[i].y, shape[i].z));
+		}
+		else	// End shape
+		{
+			shape3D.push_back(Vec3(shape[i - ssize].x * coefEnd, shape[i - ssize].y * coefEnd, shape[i - ssize].z + length));
+		}
+	}
+
+	sizetab = ssize * 6;
+
+	float *vertices = new float[sizetab];
+
+	for (int i = 0; i < ssize * 2; i++)		// Remplissage tableau 1D des valeurs de points de la shape 3D pour traitement
+	{
+		vertices[3 * i] = shape3D[i].x;
+		vertices[3 * i + 1] = shape3D[i].y;
+		vertices[3 * i + 2] = shape3D[i].z;
+		std::cout << "Coord Point " << i << " : (" << vertices[3 * i] << ", " << vertices[3 * i + 1] << ", " << vertices[3 * i + 2] << ")" << std::endl;
+	}
+
+	//GL_QUADS
+	sizeind = 4 * (ssize - 1);
+	GLushort *indices = new GLushort[sizeind];
+
+	for (int i = 0; i < ssize - 1; i++)	// Remplissage tableau 1D des valeurs d'indices des faces de la shape 3D pour traitement
+	{
+		indices[4 * i] = i;
+		indices[4 * i + 1] = i + 1;
+		indices[4 * i + 2] = i + ssize + 1;
+		indices[4 * i + 3] = i + ssize;
+
+	}
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizetab * sizeof(float), vertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeind * sizeof(GLushort), indices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	delete[] vertices;
+	delete[] indices;
+
+	return true;
+}
+*/
 
 bool Initialize()
 {
 	// Test extrusion
-	LineExtrusion(shape, up, 5, 1);
+	LineExtrusion(shape, 5, 0.3);
 
 	glewInit();
 	g_BasicShader.LoadVertexShader("basic.vs");
