@@ -4,9 +4,12 @@
 #include <windows.h>
 #endif
 
+#include <vector>
+
 #include "glew.h"
 
-#include "gle.h"
+#include <stdio.h>
+#include <iostream>
 
 #ifdef _MSC_VER
 #pragma comment(lib, "glew32.lib")
@@ -20,24 +23,74 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../stb/stb_image.h"
 
-// format des vertices : X, Y, Z, ?, ?, ?, ?, ? = 8 floats
-#include "../data/DragonData.h"
-
-#if _MSC_VER
-uint32_t dragonVertexCount = _countof(DragonVertices);
-uint32_t dragonIndexCount = _countof(DragonIndices);
-#endif
 
 //-------------------------------------------------------------------- TEST extrusion ---------------------------------------------------------------------
-double t = 0.75;
 
-double shape[4][2] = 
-{
-	{-t, -t},
-	{-t, t},
-	{t, t},
-	{t, -t}
+struct Vec2 {
+	float x;
+	float y;
+
+	Vec2(float a, float b)
+	{
+		x = a;
+		y = b;
+	}
+
+	Vec2 operator+(const Vec2& vec) const {
+		return Vec2{ x + vec.x, y + vec.y };
+	}
+
+	Vec2 operator-(const Vec2& vec) const {
+		return Vec2{ x - vec.x, y - vec.y };
+	}
+
+	Vec2 operator*(float n) {
+		return Vec2{ n * x, n * y };
+	}
 };
+
+struct Vec3 {
+	float x;
+	float y;
+	float z;
+
+	Vec3(float a, float b, float c)
+	{
+		x = a;
+		y = b;
+		z = c;
+	}
+
+	Vec3 operator+(const Vec3& vec) const {
+		return Vec3{ x + vec.x, y + vec.y, z + vec.z };
+	}
+
+	Vec3 operator-(const Vec3& vec) const {
+		return Vec3{ x - vec.x, y - vec.y, z - vec.z };
+	}
+
+	Vec3 operator*(float n) {
+		return Vec3{ n * x, n * y, n * z };
+	}
+};
+
+float t = 0.75;
+
+bool canDisplay = false;
+bool lineMode = false;
+
+int sizetab;
+int sizeind;
+
+std::vector<Vec2> shape;
+
+void MakeVectors()
+{
+	shape.push_back(Vec2(-t, -t));
+	shape.push_back(Vec2(-t, t ));
+	shape.push_back(Vec2(t, t ));
+	shape.push_back(Vec2(t, -t ));
+}
 
 double path[4][3] = 
 {
@@ -47,14 +100,7 @@ double path[4][3] =
 	{0.0,0.0,3.0}
 };
 
-double up[3] = { 0.0,1.0,0.0 };
-
-
-void extrude()
-{
-
-	gleExtrusion(4, shape, NULL, up, 4, path, NULL);
-}
+float up[3] = { 0.0,1.0,0.0 };
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
 EsgiShader g_BasicShader;
@@ -123,46 +169,135 @@ void ChangeCam(int type)
 
 }
 
+bool LineExtrusion(std::vector<Vec2> &shape, float direct[3], float length, float coefEnd = 1)
+{
+	MakeVectors();
+	std::vector<Vec3> shape3D;
+
+	int ssize = shape.size();
+
+	std::cout << "Points in shape = " << ssize << std::endl;
+
+	for (int i = 0; i < ssize * 2; i++)	//Remplissage vector des points de la shape 3D, base puis end
+	{
+		if (i < ssize) // Base shape
+		{
+			shape3D.push_back(Vec3( shape[i].x, shape[i].y, 0.0 ));
+		}
+		else	// End shape
+		{
+			shape3D.push_back(Vec3(shape[i - ssize].x, shape[i - ssize].y, length ));
+		}
+	}
+
+	sizetab = ssize * 6;
+
+	float *vertices = new float[sizetab];
+
+	for (int i = 0; i < ssize*2; i++)		// Remplissage tableau 1D des valeurs de points de la shape 3D pour traitement
+	{
+		vertices[3 * i] = shape3D[i].x;
+		vertices[3 * i + 1] = shape3D[i].y;
+		vertices[3 * i + 2] = shape3D[i].z;
+		std::cout << "Coord Point " << i << " : (" << vertices[3 * i] << ", " << vertices[3 * i + 1] << ", "<< vertices[3 * i + 2] << ")" << std::endl;
+	}
+
+	/* GL_TRIANGLES
+	sizeind = 6 * (ssize - 1);
+	GLushort *indices = new GLushort[sizeind];
+
+	for (int i = 0; i < ssize-1; i++)	// Remplissage tableau 1D des valeurs d'indices des faces de la shape 3D pour traitement
+	{
+	indices[6 * i] = i;
+	indices[6 * i + 1] = i + 1;
+	indices[6 * i + 2] = i + ssize;
+	indices[6 * i + 3] = i + ssize;
+	indices[6 * i + 4] = i + 1;
+	indices[6 * i + 5] = i + ssize + 1;
+	}
+
+	for (int i = 0; i < ssize - 1; i++)	// Affichage des infos de triangles
+	{
+		std::cout << "Triangle " << 2*i << " : { (" << vertices[3 * indices[6 * i]] << ", " << vertices[3 * indices[6 * i] + 1] << ", " << vertices[3 * indices[6 * i] + 2] << ") | ("
+		<< vertices[3 * indices[6 * i + 1]] << ", " << vertices[3 * indices[6 * i + 1] + 1] << ", " << vertices[3 * indices[6 * i + 1] + 2] << ") | ("
+		<< vertices[3 * indices[6 * i+2]] << ", " << vertices[3 * indices[6 * i+2] + 1] << ", " << vertices[3 * indices[6 * i+2] + 2] << ") }" << std::endl;
+		std::cout << "Triangle " << 2*i + 1<< " : { (" << vertices[3 * indices[6 * i+3]] << ", " << vertices[3 * indices[6 * i + 3] + 1] << ", " << vertices[3 * indices[6 * i + 3] + 2] << ") | ("
+		<< vertices[3 * indices[6 * i + 4]] << ", " << vertices[3 * indices[6 * i + 4] + 1] << ", " << vertices[3 * indices[6 * i + 4] + 2] << ") | ("
+		<< vertices[3 * indices[6 * i + 5]] << ", " << vertices[3 * indices[6 * i + 5] + 1] << ", " << vertices[3 * indices[6 * i + 5] + 2] << ") }" << std::endl;
+	}
+
+	*/
+
+	//GL_QUADS
+	sizeind = 4 * (ssize - 1);
+	GLushort *indices = new GLushort[sizeind];
+
+	for (int i = 0; i < ssize - 1; i++)	// Remplissage tableau 1D des valeurs d'indices des faces de la shape 3D pour traitement
+	{
+		indices[4 * i] = i;
+		indices[4 * i + 1] = i + 1;
+		indices[4 * i + 2] = i + ssize + 1;
+		indices[4 * i + 3] = i + ssize;
+
+	}
+
+	/*for (int i = 0; i < sizeind; i++)
+	{
+		std::cout << i << " : " << indices[i] << std::endl;
+	}*/
+	
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizetab * sizeof(float), vertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeind * sizeof(GLushort), indices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	delete[] vertices;
+	delete[] indices;
+
+	return true;
+}
+
+
+void DisplayExtrusion()
+{
+	auto program = g_BasicShader.GetProgram();
+	glUseProgram(program);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	auto position_location = glGetAttribLocation(program, "a_Position");
+
+	glVertexAttribPointer(position_location, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), reinterpret_cast<const void *>(0 * sizeof(float)));
+
+
+	//glEnableVertexAttribArray(texcoords_location);
+	glEnableVertexAttribArray(position_location);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glDrawElements(GL_QUADS, sizeind, GL_UNSIGNED_SHORT, nullptr);
+
+	glDisableVertexAttribArray(position_location);
+
+	glUseProgram(0);
+}
+
+
 
 bool Initialize()
 {
+	// Test extrusion
+	LineExtrusion(shape, up, 5, 1);
+
 	glewInit();
-	extrude();
 	g_BasicShader.LoadVertexShader("basic.vs");
 	g_BasicShader.LoadFragmentShader("basic.fs");
 	g_BasicShader.CreateProgram();
-
-	glGenTextures(1, &TexObj);
-	glBindTexture(GL_TEXTURE_2D, TexObj);
-	int w, h, c; //largeur, hauteur et # de composantes du fichier
-	uint8_t* bitmapRGBA = stbi_load("../data/dragon.png",
-		&w, &h, &c, STBI_rgb_alpha);
-
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); //GL_NEAREST)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, // Destination
-		GL_RGBA, GL_UNSIGNED_BYTE, bitmapRGBA);		// Source
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	stbi_image_free(bitmapRGBA);
-	
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenBuffers(1, &VBO);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, dragonVertexCount * sizeof(float), DragonVertices, GL_STATIC_DRAW);
-
-	// rendu indexe
-	glGenBuffers(1, &IBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, dragonIndexCount *  sizeof(GLushort), DragonIndices, GL_STATIC_DRAW);
-
-	// le fait de specifier 0 comme BO desactive l'usage des BOs
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	ChangeCam(CamType);
 
@@ -186,6 +321,16 @@ void update()
 
 void animate()
 {
+	if (lineMode)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	
+
 	// afin d'obtenir le deltatime actuel
 	TimeSinceAppStartedInMS = glutGet(GLUT_ELAPSED_TIME);
 	TimeInSeconds = TimeSinceAppStartedInMS / 1000.0f;
@@ -200,12 +345,6 @@ void animate()
 
 	auto program = g_BasicShader.GetProgram();
 	glUseProgram(program);
-	
-	uint32_t texUnit = 0;
-	glActiveTexture(GL_TEXTURE0 + texUnit);
-	glBindTexture(GL_TEXTURE_2D, TexObj);
-	auto texture_location = glGetUniformLocation(program, "u_Texture");
-	glUniform1i(texture_location, texUnit);
 	
 	// UNIFORMS
 	Esgi::Mat4 worldMatrix;
@@ -249,48 +388,8 @@ void animate()
 	auto time_location = glGetUniformLocation(program, "u_Time");
 	glUniform1f(time_location, TimeInSeconds);
 
-	// ATTRIBUTES
-	auto normal_location = glGetAttribLocation(program, "a_Normal");
-	auto position_location = glGetAttribLocation(program, "a_Position");
-	auto texcoords_location = glGetAttribLocation(program, "a_TexCoords");
-	//glVertexAttrib3f(color_location, 0.0f, 1.0f, 0.0f);
 
-	// Le fait de specifier la ligne suivante va modifier le fonctionnement interne de glVertexAttribPointer
-	// lorsque GL_ARRAY_BUFFER != 0 cela indique que les donnees sont stockees sur le GPU
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//le VBO contient des vertex au format suivant :
-	//X, Y, Z, ?, ?, ?, U, V
-
-	struct Vertex
-	{
-		float x, y, z;		// offset = 0
-		float nx, ny, nz;	// offset = 3
-		float u, v;			// offset = 6
-	};
-
-	// 1er cas on à l'adresse du tableau
-	Vertex* v = (Vertex*)DragonVertices;
-
-	//size_t rel = offsetof(adresse - DragonVertices)
-
-	glVertexAttribPointer(position_location, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void *>(0 * sizeof(float)));
-	
-	glVertexAttribPointer(normal_location, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void *>(3 * sizeof(float)));
-	// on interprete les 3 valeurs inconnues comme RGB alors que ce sont les normales
-	glVertexAttribPointer(texcoords_location, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<const void *>(6 * sizeof(float)));
-
-	//glEnableVertexAttribArray(texcoords_location);
-	glEnableVertexAttribArray(position_location);
-	glEnableVertexAttribArray(normal_location);
-	glEnableVertexAttribArray(texcoords_location);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glDrawElements(GL_TRIANGLES, dragonIndexCount, GL_UNSIGNED_SHORT, nullptr);
-
-	glDisableVertexAttribArray(position_location);
-	glDisableVertexAttribArray(normal_location);
-	glDisableVertexAttribArray(texcoords_location);
-	glUseProgram(0);
+	DisplayExtrusion();
 
 	//Repositionnement du curseur 
 	//glutWarpPointer(width*0.5f, height*0.5f);
@@ -367,6 +466,10 @@ void keyboard(unsigned char key, int x, int y)
 	{
 		ChangeCam(1);
 	}
+	if (key == 'l')
+	{
+		lineMode = !lineMode;
+	}
 }
 
 void mouse(int x, int y) 
@@ -391,7 +494,7 @@ int main(int argc, const char* argv[])
 	glutInitWindowPosition(200, 100);
 	glutInitWindowSize(width, height);
 	// creation de la fenetre ainsi que du contexte de rendu
-	glutCreateWindow("Transformation");
+	glutCreateWindow("Extrusion");
 
 #ifdef FREEGLUT
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);

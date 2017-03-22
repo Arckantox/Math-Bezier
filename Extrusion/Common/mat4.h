@@ -12,6 +12,8 @@
 
 #include <iostream>
 
+float M_PI = 3.14159265359;
+
 namespace Esgi
 {
 	struct Mat4
