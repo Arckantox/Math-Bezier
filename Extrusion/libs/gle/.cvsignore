@@ -1,0 +1,12 @@
+Makefile
+config.cache
+config.log
+config.status
+config.h
+*.tar.gz
+*.patch
+*.diff
+*.diffs
+stamp-h
+stamp-h.in
+libtool
